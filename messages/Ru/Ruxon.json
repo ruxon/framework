@@ -1,0 +1,9 @@
+{
+    "\"{Field}\" cannot be blank.": "Поле \"{Field}\" обязательно для заполнения.",
+    "Field \"{Field}\" has an invalid format.": "Поле \"{Field}\" имеет недопустимый формат.",
+    "Invalid characters entered the picture.": "Неверно введены символы с картинки.",
+    "\"{Field}\" incorrectly.": "\"{Field}\" введен неверно.",
+    "Field \"{Field}\" must be between {StartLength} to {EndLength} characters.": "Поле \"{Field}\" должно быть длиной от {StartLength} до {EndLength} символов.",
+    "Field \"{Field}\" should be up to {EndLength} characters.": "Поле \"{Field}\" должно быть длиной до {EndLength} символов.",
+    "Such \"{Field}\" already exists in our database.": "Такой \"{Field}\" уже есть в нашей базе."
+}
