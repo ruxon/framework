@@ -3,7 +3,7 @@
 	"description": "Ruxon PHP Framework",
 	"keywords": ["ruxon", "framework"],
 	"homepage": "http://ruxon-framework.ru/",
-	"type": "library",
+	"type": "ruxon-library",
 	"license": "MIT",
 	"support": {
 		"issues": "https://github.com/ruxon/framework/issues?state=open",
@@ -17,11 +17,5 @@
 	},
 	"autoload": {
 		"psr-4": { "ruxon\\": "" }
-	},
-	
-	"extra": {
-        	"installer-paths": {
-            		"ruxon/framework": ["ruxon/framework"]
-        	}
-    	}
+	}
 }
