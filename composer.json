@@ -12,9 +12,16 @@
 	},
 	"require": {
 		"php": ">=5.4.0",
-		"ext-mbstring": "*"
+		"ext-mbstring": "*",
+		"composer/installers": "~1.0"
 	},
 	"autoload": {
 		"psr-4": { "ruxon\\": "" }
-	}
+	},
+	
+	"extra": {
+        	"installer-paths": {
+            		"ruxon/framework": ["ruxon/framework"]
+        	}
+    	}
 }
