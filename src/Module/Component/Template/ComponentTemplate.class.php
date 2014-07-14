@@ -11,7 +11,7 @@ class ComponentTemplate extends Ruxon
 {
     /**
      * Данные
-     * 
+     *
      * @var array
      */
     protected $aData = array();
@@ -37,12 +37,16 @@ class ComponentTemplate extends Ruxon
 
         $sBaseTemplate = Core::app()->theme()->getName();
 
-		$sTemplateTemplateFile = RX_PATH.'/themes/'.$sBaseTemplate.'/components/'.$this->sModuleAlias.'/'.$this->sComponentAlias.'/'.$sTemplateFinal.'.tpl.php';
-		$sTemplateComponentFile = RX_PATH.'/ruxon/modules/'.$this->sModuleAlias.'/components/'.$this->sComponentAlias.'/templates/'.$sBaseTemplate.'/'.$sTemplateFinal.'.tpl.php';
-		$sTemplateDefaultComponentFile = RX_PATH.'/ruxon/modules/'.$this->sModuleAlias.'/components/'.$this->sComponentAlias.'/templates/default/'.$sTemplateFinal.'.tpl.php';
+        $module = Core::app()->getModuleById($this->sModuleAlias);
+        $infoPath = empty($module['BasePath']) ? RX_PATH.'/ruxon/modules/'.$this->sModuleAlias.'/components/'.$this->sComponentAlias : RX_PATH.'/'.$module['BasePath'].'/components/'.$this->sComponentAlias;
 
-		ob_start();
-        
+
+        $sTemplateTemplateFile = RX_PATH.'/themes/'.$sBaseTemplate.'/components/'.$this->sModuleAlias.'/'.$this->sComponentAlias.'/'.$sTemplateFinal.'.tpl.php';
+        $sTemplateComponentFile = $infoPath.'/templates/'.$sBaseTemplate.'/'.$sTemplateFinal.'.tpl.php';
+        $sTemplateDefaultComponentFile = $infoPath.'/templates/default/'.$sTemplateFinal.'.tpl.php';
+
+        ob_start();
+
         if (file_exists($sTemplateTemplateFile)) {
             include($sTemplateTemplateFile);
         } else if (file_exists($sTemplateComponentFile)) {
@@ -53,19 +57,19 @@ class ComponentTemplate extends Ruxon
             throw new RxException('Не найден шаблон "'.$sTemplateFinal.'" для компонента "'.$this->sComponentAlias.'".');
         }
 
-		$sResult = "<!-- Component: '".$this->sModuleAlias.".".$this->sComponentAlias."' -->\r\n";
-		$sResult .= ob_get_contents()."\r\n";
-		$sResult .= "<!-- End of Component: '".$this->sModuleAlias.".".$this->sComponentAlias."' -->\r\n";
-		ob_end_clean();
+        $sResult = "<!-- Component: '".$this->sModuleAlias.".".$this->sComponentAlias."' -->\r\n";
+        $sResult .= ob_get_contents()."\r\n";
+        $sResult .= "<!-- End of Component: '".$this->sModuleAlias.".".$this->sComponentAlias."' -->\r\n";
+        ob_end_clean();
 
-		return $sResult;
+        return $sResult;
     }
-    
+
     public function theme()
     {
         return Core::app()->theme();
     }
-    
+
     public function module_config($alias)
     {
         return Manager::getInstance()->getModule($this->sModuleAlias)->config($alias);

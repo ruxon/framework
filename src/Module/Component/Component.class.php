@@ -2,10 +2,10 @@
 
 /**
  * Component: abstract class for a component
- * 
+ *
  * @package Module
  * @subpackage Component
- * @version 6.1 
+ * @version 6.1
  */
 abstract class Component
 {
@@ -17,7 +17,7 @@ abstract class Component
     protected $sModelAlias;
 
     protected $sComponentAlias;
-    
+
     protected $aContainer = array();
 
     protected $oRequest;
@@ -29,35 +29,38 @@ abstract class Component
     protected $oTemplate = false;
 
     /**
-    * Events
-    *
-    * @var array
-    */
+     * Events
+     *
+     * @var array
+     */
     protected $aEvents;
-    
+
     protected $execution_start = 0;
 
     public function  __construct($aConfig = array())
     {
         $this->execution_start = microtime(true);
-        
-        $this->aContainer = Loader::loadConfigFile(RX_PATH.'/ruxon/modules/'.$this->sModuleAlias.'/components/'.$this->sComponentAlias, 'component');
 
-		$this->init($aConfig);
+        $module = Core::app()->getModuleById($this->sModuleAlias);
+        $infoPath = empty($module['BasePath']) ? RX_PATH.'/ruxon/modules/'.$this->sModuleAlias.'/components/'.$this->sComponentAlias : RX_PATH.'/'.$module['BasePath'].'/components/'.$this->sComponentAlias;
 
-		$this->setComponentResponse(new ComponentResponse());
+        $this->aContainer = Loader::loadConfigFile($infoPath, 'component');
 
-		if (!$this->getComponentRequest()->getTemplate()) {
-			$this->getComponentRequest()->setTemplate('Index');
-		}
+        $this->init($aConfig);
+
+        $this->setComponentResponse(new ComponentResponse());
+
+        if (!$this->getComponentRequest()->getTemplate()) {
+            $this->getComponentRequest()->setTemplate('Index');
+        }
     }
 
     public function init($aConfig = array())
     {
         $aAllConfig = array();
         /* Инициализация параметров по-умолчанию */
-		if (isset($this->aContainer['Params']) && is_array($this->aContainer['Params']) && count($this->aContainer['Params']) > 0) {
-			/*if (count($aConfig)) {
+        if (isset($this->aContainer['Params']) && is_array($this->aContainer['Params']) && count($this->aContainer['Params']) > 0) {
+            /*if (count($aConfig)) {
                 foreach ($aConfig as $cv => $cfg) {
                     if (!key_exists($cv, $this->aContainer['Params'])) {
                         unset($aConfig[$cv]);
@@ -71,13 +74,13 @@ abstract class Component
                 } else if (isset($val['Default'])) {
                     $aAllConfig[$var] = $val['Default'];
                 }
-			}
+            }
 
-		}
+        }
 
-		$this->setComponentRequest(new ComponentRequest());
+        $this->setComponentRequest(new ComponentRequest());
         $this->getComponentRequest()->import($aAllConfig);
-		/* END OF: Инициализация параметров по-умолчанию */
+        /* END OF: Инициализация параметров по-умолчанию */
 
         return true;
     }
@@ -93,18 +96,18 @@ abstract class Component
     {
         $this->start();
 
-		$aResult = array();
+        $aResult = array();
 
-        $this->end($aResult, true);		
+        $this->end($aResult, true);
     }
 
     public function end($aResult, $bSuccess = true)
     {
         $this->getComponentResponse()->setIsSuccess($bSuccess);
-		$this->getComponentResponse()->setResult($aResult);
-        
+        $this->getComponentResponse()->setResult($aResult);
+
         $this->getTemplate()->import($aResult);
-        
+
         $end = microtime(true);
         $debug = '';
         if (RUXON_DEBUG)
@@ -115,11 +118,11 @@ abstract class Component
         }
 
         //if (isset($this->aContainer['UseTemplate']) && $this->aContainer['UseTemplate']) {
-            $this->getComponentResponse()->setHtml($this->fetch());
+        $this->getComponentResponse()->setHtml($this->fetch());
         //} else {
         //    $this->getComponentResponse()->setHtml('');
         //}
-            
+
         if (RUXON_DEBUG)
         {
             //echo $debug;
@@ -156,30 +159,30 @@ abstract class Component
     }
 
     public function getComponentLang($sGroup, $sAlias, $sSubAlias = '')
-	{
-		$aInput = $this->aContainer['ComponentLang'];
-		if ($sSubAlias != '') {
-			if (isset($aInput[$sGroup][$sAlias][$sSubAlias])) {
-				return $aInput[$sGroup][$sAlias][$sSubAlias];
-			}
-		} else {
-			if (isset($aInput[$sGroup][$sAlias])) {
-				return $aInput[$sGroup][$sAlias];
-			}
-		}
+    {
+        $aInput = $this->aContainer['ComponentLang'];
+        if ($sSubAlias != '') {
+            if (isset($aInput[$sGroup][$sAlias][$sSubAlias])) {
+                return $aInput[$sGroup][$sAlias][$sSubAlias];
+            }
+        } else {
+            if (isset($aInput[$sGroup][$sAlias])) {
+                return $aInput[$sGroup][$sAlias];
+            }
+        }
 
-		return false;
-	}
+        return false;
+    }
 
     public function fetch($sTemplate = false)
-	{
-		return $this->getTemplate()->fetch();
-	}
+    {
+        return $this->getTemplate()->fetch();
+    }
 
     public function display()
-	{
-		echo $this->fetch();
-	}
+    {
+        echo $this->fetch();
+    }
 
     /**
      * Возвращает шаблон
@@ -187,9 +190,9 @@ abstract class Component
      * @return ComponentTemplate
      */
     public function getTemplate()
-	{
-		return $this->oTemplate;
-	}
+    {
+        return $this->oTemplate;
+    }
 
     /**
      * Возвращает тулкит
@@ -197,10 +200,10 @@ abstract class Component
      * @return Toolkit
      */
     protected function getToolkit()
-	{
-		return Toolkit::getInstance();
-	}
-    
+    {
+        return Toolkit::getInstance();
+    }
+
     public function refresh()
     {
         Toolkit::getInstance()->response->refresh();
@@ -242,7 +245,7 @@ abstract class Component
             Core::app()->hardEnd();
         }
     }
-    
+
     public function module_config($alias)
     {
         return Manager::getInstance()->getModule($this->sModuleAlias)->config($alias);
@@ -255,6 +258,8 @@ abstract class Component
 
     public function t($category, $message, $params = [], $language = null)
     {
-        return Core::app()->t($category, $message, $params, $language, 'ruxon/modules/'.$this->sModuleAlias.'/component/'.$this->sComponentAlias.'/messages');
+        $infoPath = empty($module['BasePath']) ? 'ruxon/modules/'.$this->sModuleAlias.'/component/'.$this->sComponentAlias.'/messages' : $module['BasePath'].'/component/'.$this->sComponentAlias.'/messages';
+
+        return Core::app()->t($category, $message, $params, $language, $infoPath);
     }
 }

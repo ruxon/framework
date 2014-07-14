@@ -22,9 +22,11 @@ class Loader
                     if (!isset($_ENV['RUXON_REGISTRY_MODULES'][$aPath[1]])) {
                         $sModuleAlias = $aPath[1];
 
-                        $sBasePath = 'ruxon/modules/'.$sModuleAlias;
+                        $module = Core::app()->getModuleById($sModuleAlias);
 
-                        $aModuleInfo = self::loadConfigFile(RX_PATH.'/'.$sBasePath, 'module');
+                        $sBasePath = !empty($module['BasePath']) ? $module['BasePath'] : 'ruxon/modules/'.$sModuleAlias;
+
+                        $aModuleInfo = self::loadConfigFile(realpath(RX_PATH.'/'.$sBasePath), 'module');
 
                         if (!empty($aModuleInfo))
                         {
@@ -40,8 +42,12 @@ class Loader
                             }
 
                             if (count($aFiles)) {
+
+                                $namespace = !empty($module['BasePath']) ? 'ruxon\modules\\'.$sModuleAlias : null;
+                                $namespace_replace = !empty($module['BasePath']) ? realpath($module['BasePath']) : null;
+
                                 foreach ($aFiles as $file) {
-                                    self::require_file($file, true, true);
+                                    self::require_file($file, true, true, $namespace, $namespace_replace);
                                 }
                             }
 
@@ -61,7 +67,6 @@ class Loader
                             Manager::getInstance()->setModule($sModuleAlias, class_exists($classNameWithNamespaces) ? new $classNameWithNamespaces : new $sClassName);
                         }
                     }
-
 
                     break;
 
@@ -109,7 +114,9 @@ class Loader
                             $sModuleAlias = $aPath[1];
                             $sComponentAlias  = $aPath[2];
 
-                            $sBasePath = 'ruxon/modules/'.$sModuleAlias.'/components/'.$sComponentAlias;
+                            $module = Core::app()->getModuleById($sModuleAlias);
+
+                            $sBasePath = !empty($module['BasePath']) ? $module['BasePath'].'/components/'.$sComponentAlias : 'ruxon/modules/'.$sModuleAlias.'/components/'.$sComponentAlias;
 
                             $aModelInfo = self::loadConfigFile(RX_PATH.'/'.$sBasePath, 'component');
 
@@ -128,12 +135,16 @@ class Loader
                             }
 
                             if (count($aFiles)) {
+                                $namespace = !empty($module['BasePath']) ? 'ruxon\modules\\'.$sModuleAlias : null;
+                                $namespace_replace = !empty($module['BasePath']) ? realpath($module['BasePath']) : null;
+
                                 foreach ($aFiles as $file) {
-                                    Core::require_file($file, true, true);
+                                    self::require_file($file, true, true, $namespace, $namespace_replace);
                                 }
                             }
                         }
                     }
+
                     break;
             }
         }
@@ -167,7 +178,7 @@ class Loader
         return true;
     }
 
-    public static function require_file($sPath, $bAbs = false, $bWithNamespace = false)
+    public static function require_file($sPath, $bAbs = false, $bWithNamespace = false, $namespace = null, $namespace_replace = null)
     {
         $aResult = false;
 
@@ -186,9 +197,15 @@ class Loader
 
             if ($bWithNamespace)
             {
-                $key = substr($sPath, strpos($sPath, "/ruxon/") + 1);
-                $key = substr($key, 0, strrpos($key, ".class.php"));
-                $key = str_replace("/", "\\", $key);
+                if ($namespace === null || $namespace_replace === null) {
+                    $key = substr($sPath, strpos($sPath, "/ruxon/") + 1);
+                    $key = substr($key, 0, strrpos($key, ".class.php"));
+                    $key = str_replace("/", "\\", $key);
+                } else {
+                    $key = str_replace($namespace_replace, $namespace, realpath($sPath));
+                    $key = substr($key, 0, strrpos($key, ".class.php"));
+                    $key = str_replace("/", "\\", $key);
+                }
 
                 if (!isset($_ENV['RUXON_AUTOLOAD_CLASSES'][$key]))
                 {
