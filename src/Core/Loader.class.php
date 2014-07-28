@@ -198,7 +198,7 @@ class Loader
             if ($bWithNamespace)
             {
                 if ($namespace === null || $namespace_replace === null) {
-                    $key = substr($sPath, strpos($sPath, "/ruxon/") + 1);
+                    $key = substr($sPath, strrpos($sPath, "/ruxon/") + 1);
                     $key = substr($key, 0, strrpos($key, ".class.php"));
                     $key = str_replace("/", "\\", $key);
                 } else {

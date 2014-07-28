@@ -114,6 +114,10 @@ class WebApplication extends Application
         $sUrl = $this->getToolkit()->getRequest()->getUrl();
         $sUrl = substr($sUrl, 1);
         $nStatusCode = 200;
+        
+        if (strpos($sUrl, "?") === 0) {
+        	$sUrl = "";	
+        }
 
         if ($sUrl) {
 

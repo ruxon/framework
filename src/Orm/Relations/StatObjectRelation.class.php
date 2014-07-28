@@ -15,9 +15,9 @@ class StatObjectRelation extends ObjectRelation
             $this->aParams['Field'] => $oObject->getId()
         );
 
-        if (count($aParams) > 0) {
-            if (isset($aParams[0]['Criteria'])) {
-                foreach ($aParams[0]['Criteria'] as $key => $val) {
+        if (!empty($aParams)) {
+            if (isset($aParams['Criteria'])) {
+                foreach ($aParams['Criteria'] as $key => $val) {
                     $aLocCriteria[$key] = $val;
                 }
             }
