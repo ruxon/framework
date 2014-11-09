@@ -209,7 +209,7 @@ abstract class Component
         Toolkit::getInstance()->response->refresh();
     }
 
-    public function redirect($path, $params)
+    public function redirect($path, $params = array())
     {
         if (is_array($path))
         {
