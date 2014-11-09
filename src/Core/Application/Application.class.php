@@ -58,25 +58,17 @@ abstract class Application
     
     public function checkInstalledModules($modules = array())
     {
-        foreach ($modules as $module)
-        {
-            if (!$this->checkInstalledModule($module))
-            {
-                return false;
-            }
-        }
-        
-        return true;
+        return Toolkit::i()->modules->checkInstalledModules($modules);
     }
     
     public function checkInstalledModule($module)
     {
-        return $this->getModuleById($module) ? true : false;
+        return Toolkit::i()->modules->checkInstalledModule($module);
     }
 
     public function getModules()
     {
-        return $this->aModules;
+        return Toolkit::i()->modules->getModules();
     }
 
     public function getModuleById($id)
@@ -95,14 +87,7 @@ abstract class Application
 
     public function deleteModuleById($id)
     {
-        if (!empty($this->aModules[$id]))
-        {
-            unset($this->aModules[$id]);
-
-            return $this->saveModulesInfo();
-        }
-
-        return false;
+        return Toolkit::i()->modules->deleteModuleById($id);
     }
 
     public function t($category, $message, $params = [], $language = null, $basePath = null)
@@ -112,11 +97,7 @@ abstract class Application
 
     protected function saveModulesInfo()
     {
-        $path = RX_PATH.'/ruxon/config/modules.inc.php';
-
-        file_put_contents($path, "<?php \n\nreturn ".var_export($this->aModules, true).";");
-
-        return true;
+        return Toolkit::i()->modules->saveModulesInfo();
     }
 
     protected function loadCommonExtensions()
