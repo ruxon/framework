@@ -4,7 +4,7 @@ class I18n extends ToolkitBase
 {
     public $translations = [];
 
-	public function translate($category, $message, $params = [], $language = null, $basePath = null)
+    public function translate($category, $message, $params = [], $language = null, $basePath = null)
     {
         if ($language === null) {
             $language = Config::i()->getLang();
@@ -18,6 +18,7 @@ class I18n extends ToolkitBase
 
     public function format($message, $params, $language)
     {
+        $params_new = [];
         $matches = [];
 
         preg_match_all("/\{[A-z0-9]+\}/isU", $message, $matches);
@@ -25,10 +26,13 @@ class I18n extends ToolkitBase
         if (count($matches[0])) {
             foreach ($matches[0] as $k => $val) {
                 $message = str_replace($val, "{".$k."}", $message);
+                $val_search = str_replace("{", "", str_replace("}", "", $val));
+                $params_new[$k] = $params[$val_search];
+
             }
         }
 
-        return MessageFormatter::formatMessage($language, $message, $params);
+        return MessageFormatter::formatMessage($language, $message, $params_new);
     }
 
     protected function getMessageSource($category = null)
