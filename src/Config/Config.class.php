@@ -91,7 +91,7 @@ class Config
         $this->aDefault = isset($aData['Core']['Applications'][Core::app()->getName()]['Default']) ? $aData['Core']['Applications'][Core::app()->getName()]['Default'] : array();
         $this->aRoutes = isset($aData['Core']['Applications'][Core::app()->getName()]['Routes']) ? $aData['Core']['Applications'][Core::app()->getName()]['Routes'] : array();
 
-        $this->aModules = $aData['Modules'];
+        //$this->aModules = $aData['Modules'];
 
         return true;
 
